@@ -7,124 +7,120 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
+            margin: 20px;
         }
-        h2 {
-            color: #333;
-        }
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .form-container {
             max-width: 400px;
             margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
         }
-        label {
+        .form-container label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+            margin: 10px 0 5px;
         }
-        input[type="text"], textarea, select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 20px;
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        .gender {
-            margin-bottom: 20px;
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
-        button {
-            background-color: #5cb85c;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+        .popup span {
+            display: block;
+            margin: 10px 0;
         }
-        button:hover {
-            background-color: #4cae4c;
-        }
-        h3 {
-            color: #555;
-        }
-        #result {
-            display: block; /* Ensure result is displayed as a block */
-            margin-top: 10px; 
-            font-weight: bold; 
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
     </style>
-    <script>
-        function show() {
-            // Get the input values
-            const employeeId = document.getElementById("employeeId").value;
-            const name = document.getElementById("t1").value;
-            const address = document.getElementById("address").value;
-
-            // Get selected gender
-            const gender = document.querySelector('input[name="gender"]:checked');
-            const genderValue = gender ? gender.value : "Not specified";
-
-            // Get selected department
-            const department = document.getElementById("department").value;
-
-            // Get comments from textarea
-            const comments = document.getElementById("comments").value;
-
-            // Check if terms are accepted
-            const termsAccepted = document.getElementById("terms").checked ? "Accepted" : "Not accepted";
-
-            // Display the values using a span tag
-            document.getElementById("result").innerText = 
-                `Employee ID: ${employeeId}\nName: ${name}\nAddress: ${address}\nGender: ${genderValue}\nDepartment: ${department}\nComments: ${comments}\nTerms Accepted: ${termsAccepted}`;
-
-            // Optionally alert the data
-            alert(`Form Submitted!\nEmployee ID: ${employeeId}\nName: ${name}\nAddress: ${address}\nGender: ${genderValue}\nDepartment: ${department}\nComments: ${comments}\nTerms Accepted: ${termsAccepted}`);
-        }
-    </script>
 </head>
 <body>
-    <h2>Employee Form</h2>
-    <form onsubmit="event.preventDefault(); show();">
-        <label for="employeeId">Employee ID:</label>
-        <input type="text" id="employeeId" placeholder="Enter Employee ID" required>
+    <div class="form-container">
+        <h2>Employee Form</h2>
+        <form id="employeeForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
 
-        <label for="t1">Employee Name:</label>
-        <input type="text" id="t1" placeholder="Enter name here" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-        <label for="address">Address:</label>
-        <input type="text" id="address" placeholder="Enter address here" required>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone">
 
-        <div class="gender">
-            <label>Gender:</label>
-            <label><input type="radio" name="gender" value="Male" required> Male</label>
-            <label><input type="radio" name="gender" value="Female"> Female</label>
-        </div>
+            <label for="department">Department:</label>
+            <select id="department" name="department">
+                <option value="HR">HR</option>
+                <option value="IT">IT</option>
+                <option value="Finance">Finance</option>
+                <option value="Marketing">Marketing</option>
+            </select>
 
-        <label for="department">Department:</label>
-        <select id="department" required>
-          <option value="">Select Department</option>
-          <option value="HR">Human Resources</option>
-          <option value="IT">Information Technology</option>
-          <option value="Finance">Finance</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-        </select>
+            <label for="address">Address:</label>
+            <textarea id="address" name="address"></textarea>
 
-        <label for="comments">Comments:</label>
-        <textarea id="comments" rows="4" placeholder="Enter any comments here"></textarea>
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+    </div>
 
-        <div class="terms">
-          <label><input type="checkbox" id="terms"> I accept the terms and conditions</label>
-        </div>
+    <div class="overlay" id="overlay"></div>
 
-        <button type="submit">Submit</button>
-    </form>
-    <h3>Result:</h3>
-    <span id="result"></span>
+    <div class="popup" id="popup">
+        <h3>Employee Details</h3>
+        <span id="popupName"></span>
+        <span id="popupEmail"></span>
+        <span id="popupPhone"></span>
+        <span id="popupDepartment"></span>
+        <span id="popupAddress"></span>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const department = document.getElementById('department').value;
+            const address = document.getElementById('address').value;
+
+            document.getElementById('popupName').textContent = `Name: ${name}`;
+            document.getElementById('popupEmail').textContent = `Email: ${email}`;
+            document.getElementById('popupPhone').textContent = `Phone: ${phone}`;
+            document.getElementById('popupDepartment').textContent = `Department: ${department}`;
+            document.getElementById('popupAddress').textContent = `Address: ${address}`;
+
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
